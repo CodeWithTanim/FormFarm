@@ -64,4 +64,39 @@ class SubmissionController extends Controller
             'submissions' => $submissions
         ]);
     }
+
+    public function delete()
+    {
+        auth_middleware();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/forms');
+        }
+
+        $formId = $_POST['form_id'] ?? null;
+        $ids = $_POST['ids'] ?? null;
+
+        if (!$formId || !$ids) {
+            $this->redirect('/forms');
+        }
+
+        // Verify form ownership
+        $formModel = new Form();
+        $form = $formModel->findById($formId);
+
+        if (!$form || $form['user_id'] != $_SESSION['user_id']) {
+            $this->redirect('/forms');
+        }
+
+        $submissionModel = new Submission();
+        
+        // If it's a single ID, $ids will be from a single delete button,
+        // if it's multiple, it will be an array from checkboxes.
+        // The model's delete method handles both if we pass it correctly.
+        
+        $submissionModel->delete($ids);
+
+        $_SESSION['flash_message'] = "Submissions deleted successfully.";
+        $this->redirect("/forms/{$formId}/submissions");
+    }
 }

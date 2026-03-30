@@ -36,6 +36,11 @@ class MailHelper
 
         // Use native PHP mail()
         // Note: For XAMPP, you may need to configure sendmail.ini and php.ini
-        return mail($to, $subject, $message, $headers);
+        // Suppress warning with @ for local development environments where SMTP is not configured
+        try {
+            return @mail($to, $subject, $message, $headers);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }

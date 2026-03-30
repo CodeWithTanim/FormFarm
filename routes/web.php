@@ -21,6 +21,7 @@ $router->get('/forms/create', 'FormController@create');
 $router->post('/forms/create', 'FormController@createPost');
 $router->get('/forms/{id}/submissions', 'SubmissionController@viewSubmissions');
 $router->post('/forms/{id}/delete', 'FormController@delete'); // Using POST for deletion for safety
+$router->post('/submissions/delete', 'SubmissionController@delete');
 
 // Help Route
 $router->get('/help', function () {

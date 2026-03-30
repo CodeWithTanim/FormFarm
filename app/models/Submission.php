@@ -15,4 +15,22 @@ class Submission extends Model
         $stmt->execute([$formId]);
         return $stmt->fetchAll();
     }
+
+    public function findById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM submissions WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    public function delete($ids)
+    {
+        if (is_array($ids)) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $stmt = $this->db->prepare("DELETE FROM submissions WHERE id IN ($placeholders)");
+            return $stmt->execute($ids);
+        }
+        $stmt = $this->db->prepare("DELETE FROM submissions WHERE id = ?");
+        return $stmt->execute([$ids]);
+    }
 }
