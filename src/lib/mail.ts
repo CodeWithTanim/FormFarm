@@ -114,8 +114,10 @@ export async function sendSubmissionNotification(
       auth: { user, pass },
     });
 
+    const fromAddress = process.env.SMTP_FROM || `"FormFarm" <${user}>`;
+
     await transporter.sendMail({
-      from: `"FormFarm" <${user}>`,
+      from: fromAddress,
       to,
       subject,
       text: body,
