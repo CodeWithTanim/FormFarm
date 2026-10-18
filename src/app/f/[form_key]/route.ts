@@ -145,10 +145,11 @@ export async function POST(
     // Save submission to MongoDB FormFarmDB with metadata
     await createSubmission(form._id, data, metadata);
 
-    // Send email notification to owner with telemetry
+    // Send email notification to owner with telemetry (fallback to SMTP_USER)
     const owner = await findUserById(form.userId);
-    if (owner && owner.email) {
-      sendSubmissionNotification(owner.email, form.form_name, data, metadata).catch((err) =>
+    const targetEmail = owner?.email || process.env.SMTP_USER;
+    if (targetEmail) {
+      sendSubmissionNotification(targetEmail, form.form_name, data, metadata).catch((err) =>
         console.error('Mail notification error:', err)
       );
     }

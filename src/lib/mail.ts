@@ -114,10 +114,11 @@ export async function sendSubmissionNotification(
       auth: { user, pass },
     });
 
-    const fromAddress = process.env.SMTP_FROM || `"FormFarm" <${user}>`;
+    const fromAddress = process.env.SMTP_FROM || '"FormFarm" <noreply@codewithtanim.me>';
 
     await transporter.sendMail({
       from: fromAddress,
+      replyTo: fromAddress,
       to,
       subject,
       text: body,
