@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Form Interface | FormFarm Test</title>
+    <meta name="description" content="A premium contact form designed to test FormFarm's high-security data streams.">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <main class="interface-card">
+            <h1>FormFarm</h1>
+            <p class="subtitle">Neural Data Protocol</p>
+
+            <div style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.4); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <label for="endpoint_url" style="margin-bottom: 4px; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;">Endpoint Target</label>
+                <input type="text" id="endpoint_url" value="http://localhost:3000/f/YOUR_FORM_KEY" style="padding: 8px 12px; font-size: 0.85rem;" placeholder="http://localhost:3000/f/YOUR_KEY">
+            </div>
+
+            <form action="http://localhost:3000/f/YOUR_FORM_KEY" method="POST" id="contactForm">
+                <div class="form-group">
+                    <label for="client_name">Identity</label>
+                    <input type="text" id="client_name" name="client_name" placeholder="Full Name" required>
+                    <div class="focus-glow"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_email">Comm Link</label>
+                    <input type="email" id="client_email" name="client_email" placeholder="Email Address" required>
+                    <div class="focus-glow"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_subject">Topic</label>
+                    <input type="text" id="client_subject" name="client_subject" placeholder="Data Stream Subject"
+                        required>
+                    <div class="focus-glow"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_message">Payload</label>
+                    <textarea id="client_message" name="client_message" placeholder="Message content..."
+                        required></textarea>
+                    <div class="focus-glow"></div>
+                </div>
+
+                <button type="submit" id="submitBtn">Transmit Data</button>
+            </form>
+
+            <div class="footer-text">
+                Secure Transmission via FormFarm Endpoints
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

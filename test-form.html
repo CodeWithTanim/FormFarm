@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FormFarm Test Form 🚜</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: #09090b;
+      --accent-red: #ff0a0a;
+      --accent-red-hover: #ff3b3b;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--primary-bg);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    h1 span {
+      color: var(--accent-red);
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 2rem;
+    }
+
+    .step-box {
+      background: rgba(255, 10, 10, 0.06);
+      border: 1px solid rgba(255, 10, 10, 0.25);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 1.75rem;
+    }
+
+    .step-box ol {
+      margin-left: 1.2rem;
+      margin-top: 0.4rem;
+    }
+
+    .step-box li {
+      margin-bottom: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(20, 20, 24, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-red);
+      box-shadow: 0 0 12px rgba(255, 10, 10, 0.35);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 95px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      box-shadow: 0 0 15px rgba(255, 10, 10, 0.3);
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--accent-red-hover);
+      box-shadow: 0 0 25px rgba(255, 10, 10, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.4rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      opacity: 0.6;
+      user-select: none;
+    }
+
+    .mode-btn.active {
+      background: rgba(255, 10, 10, 0.2);
+      border: 1px solid rgba(255, 10, 10, 0.4);
+      color: #ffffff;
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    #ajaxResult {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>FORMFARM <span>TEST FORM</span></h1>
+    <p class="subtitle">Simulate external HTML form submissions to your FormFarm endpoint</p>
+
+    <div class="step-box">
+      <strong>Quick Instructions:</strong>
+      <ol>
+        <li>Make sure your server is running (<code>npm run dev</code>).</li>
+        <li>Login at <a href="http://localhost:3000/dashboard" target="_blank" style="color: #ff4c4c;">localhost:3000</a> and copy your form endpoint URL.</li>
+        <li>Paste it into the <strong>Endpoint URL</strong> field below and click submit!</li>
+      </ol>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="mode-switch">
+      <div id="btnStandard" class="mode-btn active" onclick="setMode('standard')">Standard POST (Redirects to /thanks)</div>
+      <div id="btnAjax" class="mode-btn" onclick="setMode('ajax')">AJAX / Fetch (No Page Reload)</div>
+    </div>
+
+    <!-- The Test Form -->
+    <form id="testForm" action="http://localhost:3000/f/REPLACE_WITH_YOUR_KEY" method="POST">
+      
+      <div class="form-group">
+        <label for="endpointInput">FormFarm Endpoint URL</label>
+        <input 
+          type="text" 
+          id="endpointInput" 
+          value="http://localhost:3000/f/REPLACE_WITH_YOUR_KEY" 
+          placeholder="http://localhost:3000/f/YOUR_16_CHAR_KEY"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="John Doe" value="John Doe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="john@example.com" value="john@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="Project Inquiry" value="Testing FormFarm Next.js Backend">
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Write your message here...">Hello! This is a test transmission submitted to my FormFarm Next.js + MongoDB backend.</textarea>
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn">Transmit Data Packet</button>
+    </form>
+
+    <div id="ajaxResult"></div>
+  </div>
+
+  <script>
+    let currentMode = 'standard';
+    const form = document.getElementById('testForm');
+    const endpointInput = document.getElementById('endpointInput');
+    const resultBox = document.getElementById('ajaxResult');
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('btnStandard').classList.toggle('active', mode === 'standard');
+      document.getElementById('btnAjax').classList.toggle('active', mode === 'ajax');
+      resultBox.style.display = 'none';
+    }
+
+    // Keep form action updated with endpoint input
+    endpointInput.addEventListener('input', () => {
+      form.action = endpointInput.value.trim();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      form.action = endpointInput.value.trim();
+
+      if (currentMode === 'ajax') {
+        e.preventDefault();
+        resultBox.style.display = 'block';
+        resultBox.style.background = 'rgba(255, 255, 255, 0.05)';
+        resultBox.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        resultBox.style.color = '#ffffff';
+        resultBox.innerText = 'Transmitting data via AJAX...';
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json'
+            },
+            body: formData
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            resultBox.style.background = 'rgba(16, 185, 129, 0.1)';
+            resultBox.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            resultBox.style.color = '#10b981';
+            resultBox.innerHTML = `<strong>Success! (HTTP ${response.status})</strong><br>Response: ${JSON.stringify(data)}`;
+          } else {
+            resultBox.style.background = 'rgba(255, 10, 10, 0.1)';
+            resultBox.style.borderColor = 'rgba(255, 10, 10, 0.3)';
+            resultBox.style.color = '#ff6b6b';
+            resultBox.innerHTML = `<strong>Error (HTTP ${response.status}):</strong><br>${JSON.stringify(data)}`;
+          }
+        } catch (err) {
+          resultBox.style.background = 'rgba(255, 10, 10, 0.1)';
+          resultBox.style.borderColor = 'rgba(255, 10, 10, 0.3)';
+          resultBox.style.color = '#ff6b6b';
+          resultBox.innerHTML = `<strong>Request Failed:</strong> ${err.message}`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
