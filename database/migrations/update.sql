@@ -1,3 +1,0 @@
--- No schema changes required for submission deletion functionality.
--- The existing 'submissions' table structure is sufficient for individual and multi-select deletion.
--- All deletions are handled via SQL 'DELETE' queries with 'WHERE id IN (...)' or 'WHERE id = ?' conditions.
