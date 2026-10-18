@@ -149,9 +149,11 @@ export async function POST(
     const owner = await findUserById(form.userId);
     const targetEmail = owner?.email || process.env.SMTP_USER;
     if (targetEmail) {
-      sendSubmissionNotification(targetEmail, form.form_name, data, metadata).catch((err) =>
-        console.error('Mail notification error:', err)
-      );
+      try {
+        await sendSubmissionNotification(targetEmail, form.form_name, data, metadata);
+      } catch (err) {
+        console.error('Mail notification error:', err);
+      }
     }
 
     if (isJsonRequest) {

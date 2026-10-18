@@ -112,11 +112,14 @@ export async function sendSubmissionNotification(
       port,
       secure: port === 465,
       auth: { user, pass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
 
     const fromAddress = process.env.SMTP_FROM || '"FormFarm" <noreply@codewithtanim.me>';
 
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: fromAddress,
       replyTo: fromAddress,
       to,
@@ -124,9 +127,10 @@ export async function sendSubmissionNotification(
       text: body,
       html: htmlBody,
     });
+    console.log(`[FormFarm Mail Notification] Successfully dispatched to ${to} (MessageId: ${info.messageId})`);
     return true;
   } catch (err) {
-    console.error('Failed to send submission email:', err);
+    console.error(`[FormFarm Mail Notification Error] Failed to send email to ${to}:`, err);
     return false;
   }
 }
