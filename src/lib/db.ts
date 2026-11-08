@@ -1,12 +1,34 @@
 import { ObjectId } from 'mongodb';
 import { getDatabase } from './mongodb';
 
+export interface UserEmailSettings {
+  enabled: boolean;
+  smtpHost?: string;
+  smtpPort?: number;
+  smtpUser?: string;
+  smtpPass?: string;
+  fromEmail?: string;
+  toEmail?: string;
+}
+
+export interface UserTelegramSettings {
+  enabled: boolean;
+  botToken?: string;
+  chatId?: string;
+}
+
+export interface UserNotificationSettings {
+  email: UserEmailSettings;
+  telegram: UserTelegramSettings;
+}
+
 export interface UserDoc {
   _id?: ObjectId;
   name: string;
   email: string;
   password: string;
   createdAt: Date;
+  notificationSettings?: UserNotificationSettings;
 }
 
 export interface FormDoc {
@@ -22,6 +44,8 @@ export interface SubmissionMetadata {
   country?: string;
   city?: string;
   userAgent?: string;
+  domain?: string;
+  referer?: string;
 }
 
 export interface SubmissionDoc {
@@ -72,6 +96,69 @@ export async function createUser(userData: Omit<UserDoc, '_id' | 'createdAt'>): 
   };
   const result = await db.collection<UserDoc>('users').insertOne(newUser);
   return { ...newUser, _id: result.insertedId };
+}
+
+export const defaultNotificationSettings: UserNotificationSettings = {
+  email: {
+    enabled: false,
+    smtpHost: '',
+    smtpPort: 587,
+    smtpUser: '',
+    smtpPass: '',
+    fromEmail: '',
+    toEmail: '',
+  },
+  telegram: {
+    enabled: false,
+    botToken: '',
+    chatId: '',
+  },
+};
+
+export async function getUserNotificationSettings(userId: string | ObjectId): Promise<UserNotificationSettings> {
+  const db = await getDatabase();
+  const objectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+  const user = await db.collection<UserDoc>('users').findOne({ _id: objectId });
+  if (!user || !user.notificationSettings) {
+    return { ...defaultNotificationSettings };
+  }
+  return {
+    email: {
+      ...defaultNotificationSettings.email,
+      ...(user.notificationSettings.email || {}),
+    },
+    telegram: {
+      ...defaultNotificationSettings.telegram,
+      ...(user.notificationSettings.telegram || {}),
+    },
+  };
+}
+
+export async function updateUserNotificationSettings(
+  userId: string | ObjectId,
+  settings: Partial<UserNotificationSettings>
+): Promise<boolean> {
+  const db = await getDatabase();
+  const objectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+  const current = await getUserNotificationSettings(userId);
+  const updated: UserNotificationSettings = {
+    email: {
+      ...current.email,
+      ...(settings.email || {}),
+    },
+    telegram: {
+      ...current.telegram,
+      ...(settings.telegram || {}),
+    },
+  };
+
+  const result = await db.collection<UserDoc>('users').updateOne(
+    { _id: objectId },
+    { $set: { notificationSettings: updated } }
+  );
+
+  return result.acknowledged;
 }
 
 // Form Helpers
