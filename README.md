@@ -1,4 +1,4 @@
-﻿# FormFarm 🚜 | Professional Form Backend Service (SaaS)
+# FormFarm 🚜 | Professional Form Backend Service (SaaS)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16+-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js Badge">
@@ -54,10 +54,22 @@ Simply point any HTML form's `action` attribute to your unique FormFarm endpoint
   - Syntax-highlighted key-value payload inspector.
   - Individual packet purge and bulk select-all purge with confirmation safeguards.
 
-- 📬 **Dual-Format Email Notifications (Nodemailer)**:
-  - Form owners receive instant email notifications upon every submission.
-  - Delivers both a rich, dark-themed responsive **HTML Email** and a clean **Plain Text** fallback.
-  - Includes the complete submitted payload alongside the client's IP, City, Country, and User-Agent.
+- 📬 **Member-Controlled Private Email Relay (Custom SMTP)**:
+  - Form owners configure their own private SMTP credentials (Gmail, Outlook, Amazon SES, SendGrid) directly from **Panel Settings (`/settings`)**.
+  - **Zero Server Risk**: Submissions are never dispatched through the server admin's personal account, protecting platform owners from spam blacklists or quota burns.
+  - Features real-time SMTP connection testing ("Send Test Email") right from the panel.
+  - Delivers both a rich, dark-themed responsive **HTML Email** and a clean **Plain Text** fallback with full client telemetry.
+
+- 🤖 **Telegram Push Notification Bot**:
+  - Instant mobile and desktop push alerts delivered via Telegram when forms receive submissions.
+  - Members enter their own Telegram **Bot Token** (via `@BotFather`) and **Chat ID**.
+  - Includes syntax-highlighted submission payload, submission timestamp, client IP, country, and User-Agent.
+  - Interactive "Send Test Telegram" button to verify bot connectivity in seconds.
+
+- 🔒 **Cryptographic Member-to-Member Isolation**:
+  - Notifications are strictly partitioned by authenticated `userId`.
+  - When User A's endpoint receives submissions, **only User A** is notified through User A's verified channels.
+  - User B's settings and data are never queried or contacted. No cross-account notification leak can ever occur.
 
 - 🎨 **Dark Sci-Fi Cyberpunk UI**:
   - Custom Vanilla CSS design system with custom properties (`--primary-bg: #000000`, `--accent-red: #ff0a0a`, `--header-red: #ff4c4c`).
@@ -112,8 +124,9 @@ FormFarm/
 │   │   ├── api/                ← Backend REST API Handlers
 │   │   │   ├── auth/           ← Authentication (Login, Register, Logout, Me)
 │   │   │   ├── forms/          ← Form Management & Submissions Listing
+│   │   │   ├── settings/       ← Member Notification Configuration & Testing
 │   │   │   └── submissions/    ← Bulk & Single Submission Purge
-│   │   ├── dashboard/          ← Analytics & Recent Activity Dashboard
+│   │   ├── dashboard/          ← Analytics, Active Endpoints & Alerts Status
 │   │   ├── endpoint_active/    ← GET Notice Information Page
 │   │   ├── f/[form_key]/       ← Public POST Form Ingestion Handler
 │   │   ├── forms/              ← Form Management & Copy Endpoint
@@ -122,6 +135,7 @@ FormFarm/
 │   │   ├── help/               ← Technical Documentation & Guide
 │   │   ├── login/              ← Portal Access Page
 │   │   ├── register/           ← Identity Creation Page
+│   │   ├── settings/           ← Private Member Email & Telegram Bot Setup
 │   │   ├── thanks/             ← Submission Successful Page
 │   │   ├── globals.css         ← FormFarm Dark Cyberpunk Design System
 │   │   └── layout.tsx          ← Root Layout with Navbar, Footer & Particles
@@ -131,8 +145,9 @@ FormFarm/
 │   │   └── ParticlesBackground.tsx ← Canvas Particle Network (Mouse Repulse)
 │   └── lib/                    ← Shared Core Utilities & Database
 │       ├── auth.ts             ← Bcrypt Password Hashing & JWT Verification
-│       ├── db.ts               ← MongoDB Models, Queries & Unique Indexes
-│       ├── mail.ts             ← Nodemailer HTML/Text Email Helper
+│       ├── db.ts               ← MongoDB Models, Queries, Notification Settings
+│       ├── mail.ts             ← Member Custom SMTP Email Relay Service
+│       ├── telegram.ts         ← Telegram Push Notification Bot Service
 │       └── mongodb.ts          ← MongoDB Atlas Client Connection Pool
 ├── test/                       ← Standalone 3D Parallax Test Suite
 │   ├── assets/                 ← Neural Background Assets

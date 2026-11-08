@@ -114,9 +114,37 @@ export default function HelpPage() {
           </h3>
           <p style={{ opacity: 0.75, lineHeight: 1.6, margin: 0 }}>
             Once a client submits your form, the data packet is instantly routed to your dashboard. You can view,
-            manage, and export all incoming payloads chronologically in the{' '}
-            <strong>Incoming Data Stream</strong> section.
+            manage, and inspect all incoming payloads chronologically in the{' '}
+            <strong>Incoming Data Stream</strong> section with full client telemetry (real IP, country, and user agent).
           </p>
+        </div>
+
+        {/* Step 4 */}
+        <div className="card glass-card animate-fade-in" style={{ padding: '2rem' }}>
+          <h3 style={{ fontWeight: 700, marginBottom: '1rem', fontSize: '1.4rem' }}>
+            <span style={{ color: 'var(--accent-red)', marginRight: '0.6rem' }}>04.</span> Private Notifications (Email &amp; Telegram)
+          </h3>
+          <p style={{ opacity: 0.75, lineHeight: 1.6, marginBottom: '1rem' }}>
+            Configure your private notification channels under{' '}
+            <Link href="/settings" style={{ color: 'var(--accent-red)', fontWeight: 600 }}>
+              Panel Settings
+            </Link>.
+            Notifications are strictly isolated to your account — no other users can ever receive your data:
+          </p>
+          <ul style={{ listStyle: 'none', opacity: 0.8, lineHeight: 1.8, padding: 0, margin: 0 }}>
+            <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+              <i className="bi bi-envelope-at" style={{ color: '#10b981', marginRight: '0.75rem', fontSize: '1.1rem' }}></i>
+              <span>
+                <strong>Custom Member SMTP:</strong> Deliver alerts directly through your own email provider (Gmail, Outlook, Amazon SES) without central server relays.
+              </span>
+            </li>
+            <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+              <i className="bi bi-telegram" style={{ color: '#0088cc', marginRight: '0.75rem', fontSize: '1.1rem' }}></i>
+              <span>
+                <strong>Telegram Push Bot:</strong> Receive instant real-time Telegram messages with form fields and submitter location on your mobile or desktop app.
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

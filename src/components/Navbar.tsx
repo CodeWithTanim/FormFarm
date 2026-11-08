@@ -89,6 +89,15 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
+                  href="/settings"
+                  className={`nav-link ${pathname === '/settings' ? 'active' : ''}`}
+                  title="Notification Settings (Email & Telegram)"
+                >
+                  <i className="bi bi-gear"></i>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/help"
                   className={`nav-link text-danger ${pathname === '/help' ? 'active' : ''}`}
                   title="Help?"

@@ -34,8 +34,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'FormFarm' }],
   icons: {
-    icon: '/images/FormFarm.png',
-    apple: '/images/FormFarm.png',
+    icon: [
+      { url: '/images/FormFarm.png', type: 'image/png' },
+    ],
+    shortcut: ['/images/FormFarm.png'],
+    apple: [
+      { url: '/images/FormFarm.png', type: 'image/png' },
+    ],
   },
   openGraph: {
     title: 'FormFarm – Future of Form Collection',
