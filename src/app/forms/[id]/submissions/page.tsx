@@ -12,6 +12,8 @@ interface SubmissionItem {
     country?: string;
     city?: string;
     userAgent?: string;
+    domain?: string;
+    referer?: string;
   };
   created_at: string;
 }
@@ -163,26 +165,36 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
           <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1.8rem' }}>Incoming Data Stream</h2>
         </div>
 
-        <div style={{ textAlign: 'right' }}>
-          {flashMsg && (
-            <div
-              className="alert alert-success animate-fade-in"
-              style={{
-                padding: '0.4rem 0.9rem',
-                fontSize: '0.85rem',
-                marginBottom: '0.5rem',
-                display: 'inline-flex',
-              }}
-            >
-              {flashMsg}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <Link
+            href="/settings"
+            className="btn btn-outline-light btn-sm"
+            title="Configure Email and Telegram push alerts"
+          >
+            <i className="bi bi-bell" style={{ marginRight: '0.4rem' }}></i> Alert Settings
+          </Link>
+
+          <div style={{ textAlign: 'right' }}>
+            {flashMsg && (
+              <div
+                className="alert alert-success animate-fade-in"
+                style={{
+                  padding: '0.4rem 0.9rem',
+                  fontSize: '0.85rem',
+                  marginBottom: '0.5rem',
+                  display: 'inline-flex',
+                }}
+              >
+                {flashMsg}
+              </div>
+            )}
+            <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', opacity: 0.5, marginBottom: '0.25rem' }}>
+              Packet Count
             </div>
-          )}
-          <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', opacity: 0.5, marginBottom: '0.25rem' }}>
-            Packet Count
+            <span className="badge bg-danger" style={{ fontSize: '1.25rem', padding: '0.4rem 1rem' }}>
+              {submissions.length}
+            </span>
           </div>
-          <span className="badge bg-danger" style={{ fontSize: '1.25rem', padding: '0.4rem 1rem' }}>
-            {submissions.length}
-          </span>
         </div>
       </div>
 
@@ -327,6 +339,15 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
                                   opacity: 0.75,
                                 }}
                               >
+                                {submission.metadata.domain && (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                    <i className="bi bi-link-45deg me-1" style={{ color: 'var(--header-red)', marginRight: '0.3rem', fontSize: '1rem' }}></i>
+                                    Domain:{' '}
+                                    <strong style={{ color: '#fff', marginLeft: '0.25rem' }}>
+                                      {submission.metadata.domain}
+                                    </strong>
+                                  </span>
+                                )}
                                 {submission.metadata.ip && (
                                   <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                                     <i className="bi bi-globe me-1" style={{ color: 'var(--header-red)', marginRight: '0.3rem' }}></i>

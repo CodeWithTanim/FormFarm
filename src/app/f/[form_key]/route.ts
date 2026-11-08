@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getFormByKey, createSubmission, findUserById, SubmissionMetadata } from '@/lib/db';
-import { sendSubmissionNotification } from '@/lib/mail';
+import { sendUserSubmissionNotification } from '@/lib/mail';
+import { sendTelegramNotification } from '@/lib/telegram';
 
 function corsHeaders() {
   return {
@@ -135,24 +136,79 @@ export async function POST(
       city = geo.city;
     }
 
+    // Extract Origin Domain & Page URL
+    const originHeader = request.headers.get('origin');
+    const refererHeader = request.headers.get('referer');
+
+    let sourceDomain = '';
+    let refererUrl = '';
+
+    if (originHeader) {
+      try {
+        const parsed = new URL(originHeader);
+        sourceDomain =
+          parsed.hostname +
+          (parsed.port && parsed.port !== '80' && parsed.port !== '443' ? `:${parsed.port}` : '');
+      } catch {
+        sourceDomain = originHeader;
+      }
+    }
+
+    if (refererHeader) {
+      refererUrl = refererHeader;
+      if (!sourceDomain) {
+        try {
+          const parsed = new URL(refererHeader);
+          sourceDomain =
+            parsed.hostname +
+            (parsed.port && parsed.port !== '80' && parsed.port !== '443' ? `:${parsed.port}` : '');
+        } catch {
+          sourceDomain = refererHeader;
+        }
+      }
+    }
+
+    // Fallback if form payload explicitly specifies domain or origin
+    if (!sourceDomain) {
+      if (data._domain) sourceDomain = String(data._domain);
+      else if (data._origin) sourceDomain = String(data._origin);
+      else if (data._referer) sourceDomain = String(data._referer);
+      else sourceDomain = 'Direct / API Submission';
+    }
+
     const metadata: SubmissionMetadata = {
       ip: clientIp,
       country,
       city,
       userAgent,
+      domain: sourceDomain,
+      referer: refererUrl || undefined,
     };
 
     // Save submission to MongoDB FormFarmDB with metadata
     await createSubmission(form._id, data, metadata);
 
-    // Send email notification to owner with telemetry (fallback to SMTP_USER)
+    // Dispatch notifications strictly to the owner's configured private channels
     const owner = await findUserById(form.userId);
-    const targetEmail = owner?.email || process.env.SMTP_USER;
-    if (targetEmail) {
-      try {
-        await sendSubmissionNotification(targetEmail, form.form_name, data, metadata);
-      } catch (err) {
-        console.error('Mail notification error:', err);
+    if (owner && owner.notificationSettings) {
+      const { email, telegram } = owner.notificationSettings;
+
+      // 1. Member's Custom Email Notification (dispatched ONLY via member's own SMTP)
+      if (email && email.enabled && email.smtpHost && email.smtpUser && email.smtpPass) {
+        try {
+          await sendUserSubmissionNotification(email, form.form_name, data, metadata, owner.email);
+        } catch (err) {
+          console.error('[Notification] Member email dispatch error:', err);
+        }
+      }
+
+      // 2. Member's Telegram Bot Notification (dispatched ONLY to member's Chat ID)
+      if (telegram && telegram.enabled && telegram.chatId) {
+        try {
+          await sendTelegramNotification(telegram, form.form_name, data, metadata);
+        } catch (err) {
+          console.error('[Notification] Member Telegram dispatch error:', err);
+        }
       }
     }
 

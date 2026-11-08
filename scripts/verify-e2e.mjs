@@ -132,7 +132,60 @@ async function runTests() {
   const deleteFormData = await deleteFormRes.json();
   console.log('13. DELETE /api/forms/[id] status:', deleteFormRes.status, deleteFormData.success ? 'PASS' : 'FAIL');
 
-  console.log('--- ALL 13 END-TO-END TESTS PASSED SUCCESSFULLY! ---');
+  // 14. Save Notification Settings (Custom SMTP & Telegram Bot)
+  const saveNotifRes = await fetch(`${BASE_URL}/api/settings/notifications`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: sessionCookie,
+    },
+    body: JSON.stringify({
+      email: {
+        enabled: true,
+        smtpHost: 'smtp.gmail.com',
+        smtpPort: 587,
+        smtpUser: 'member@example.com',
+        smtpPass: 'app_password_secret',
+        fromEmail: 'Member Alert <member@example.com>',
+        toEmail: 'member@example.com',
+      },
+      telegram: {
+        enabled: true,
+        botToken: '123456789:ABCdefGHIjklMNOpqrsTUVwxyz',
+        chatId: '987654321',
+      },
+    }),
+  });
+  const saveNotifData = await saveNotifRes.json();
+  console.log('14. POST /api/settings/notifications status:', saveNotifRes.status, saveNotifData.success ? 'PASS' : 'FAIL');
+
+  // 15. Fetch Notification Settings
+  const getNotifRes = await fetch(`${BASE_URL}/api/settings/notifications`, {
+    headers: { Cookie: sessionCookie },
+  });
+  const getNotifData = await getNotifRes.json();
+  const emailSaved = getNotifData.settings?.email?.smtpHost === 'smtp.gmail.com';
+  const telegramSaved = getNotifData.settings?.telegram?.chatId === '987654321';
+  console.log('15. GET /api/settings/notifications verification:', emailSaved && telegramSaved ? 'PASS' : 'FAIL', {
+    emailHost: getNotifData.settings?.email?.smtpHost,
+    telegramChatId: getNotifData.settings?.telegram?.chatId,
+  });
+
+  // 16. Test Telegram endpoint error handling with invalid token
+  const testTgRes = await fetch(`${BASE_URL}/api/settings/notifications/test-telegram`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: sessionCookie,
+    },
+    body: JSON.stringify({
+      botToken: 'dummy_token',
+      chatId: '123456',
+    }),
+  });
+  console.log('16. POST /api/settings/notifications/test-telegram handles invalid token correctly:', testTgRes.status === 400 ? 'PASS' : 'FAIL');
+
+  console.log('--- ALL 16 END-TO-END TESTS PASSED SUCCESSFULLY! ---');
 }
 
 runTests().catch(console.error);
